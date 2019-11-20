@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>College Feedback System (CFS) - Show All Colleges</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+
+<body class="p-3" id="tbodyMain">
+    <script>
+    var mysql = require('mysql');
+
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: null,
+        database: "cfs"
+    });
+
+    con.connect(function(err) {
+        if (err) throw err
+        console.log("Mysql connected successfully");
+    });
+
+    let sql = "SELECT * FROM college"
+
+    con.query(sql, function(err, result, fields) {
+        if (err) throw err;
+        let tableContent = ``;
+        result.forEach((res, index) => {
+
+            tableContent += `<div class="card mb-2">
+        <div class="card-body">
+            <h4 class="card-title"><strong>${res.name}</strong></h4>
+            <p class="card-text">${res.description}</p>
+            <a href="#" class="card-link text-uppercase">Show details</a>
+        </div>
+    </div>`
+        });
+        document.getElementById('tbodyMain').innerHTML = tableContent;
+    });
+    </script>
+</body>
+
+</html>
