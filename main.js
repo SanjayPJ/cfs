@@ -10,6 +10,69 @@ let mainWindow
 let loginWindow
 let adminWindow
 let showCollegeWindow
+let insertWindow
+let updateWindow
+
+function createInsertWindow() {
+    // Create the browser window.
+    insertWindow = new BrowserWindow({
+        width: 600,
+        height: 900,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true
+        },
+        parent: adminWindow,
+        modal: true,
+    })
+
+    // and load the index.html of the app.
+    insertWindow.loadFile('src/insert.html')
+
+    insertWindow.setMenuBarVisibility(false)
+
+    // Open the DevTools.
+    // insertWindow.webContents.openDevTools()
+
+    // Emitted when the window is closed.
+    insertWindow.on('closed', function() {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        insertWindow = null
+    })
+}
+
+
+function createUpdateWindow() {
+    // Create the browser window.
+    updateWindow = new BrowserWindow({
+        width: 600,
+        height: 900,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true
+        },
+        parent: adminWindow,
+        modal: true,
+    })
+
+    // and load the index.html of the app.
+    updateWindow.loadFile('src/update.html')
+
+    updateWindow.setMenuBarVisibility(false)
+
+    // Open the DevTools.
+    // updateWindow.webContents.openDevTools()
+
+    // Emitted when the window is closed.
+    updateWindow.on('closed', function() {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        updateWindow = null
+    })
+}
 
 function createShowCollegeWindow() {
     // Create the browser window.
@@ -19,7 +82,9 @@ function createShowCollegeWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true
-        }
+        },
+        parent: mainWindow,
+        modal: true,
     })
 
     // and load the index.html of the app.
@@ -45,11 +110,15 @@ function createLoginWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true
-        }
+        },
+        parent: mainWindow,
+        modal: true,
     })
 
     // and load the index.html of the app.
     loginWindow.loadFile('src/login.html')
+
+    loginWindow.setMenuBarVisibility(false)
 
     // Open the DevTools.
     // loginWindow.webContents.openDevTools()
@@ -71,7 +140,9 @@ function createAdminWindow() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true
-        }
+        },
+        parent: mainWindow,
+        modal: true,
     })
 
     // and load the index.html of the app.
@@ -147,5 +218,24 @@ ipc.on('open:window', function(event, arg) {
         case 'show-college':
             createShowCollegeWindow();
             break;
+        case 'insert':
+            createInsertWindow();
+            break;
+        case 'update':
+            createUpdateWindow();
+            break;
     }
+})
+
+ipc.on('refresh:window', function(event, arg) {
+    switch (arg) {
+        case 'admin':
+            console.log("Refreshing Admin Window");
+            adminWindow.reload();
+            break;
+    }
+})
+
+ipc.on('on:collegeUpdate', function(event, arg) {
+    updateWindow.webContents.send('collegeUpdate', arg)
 })

@@ -11,7 +11,12 @@
     <link rel="stylesheet" href="../assets/style.css">
 </head>
 
-<body class="p-3" id="tbodyMain">
+<body>
+    <div class="jumbotron jumbotron-fluid py-4">
+        <div class="container-fluid">
+        </div>
+    </div>
+    <div id="tbodyMain" class="px-3"></div>
     <script>
     var mysql = require('mysql');
 
@@ -36,9 +41,10 @@
 
             tableContent += `<div class="card mb-2">
         <div class="card-body">
-            <h4 class="card-title"><strong>${res.name}</strong></h4>
+            <h5 class="card-title"><strong>${res.name}</strong></h5>
             <p class="card-text">${res.description}</p>
             <a href="#" class="card-link text-uppercase">Show details</a>
+            <a href="#" class="card-link text-uppercase">Give Feedback</a>
         </div>
     </div>`
         });

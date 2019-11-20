@@ -19,7 +19,7 @@
     </div>
     <div class="container">
         <div class="btn-group w-100" role="group" aria-label="Basic example">
-            <button type="button" class="btn btn-outline-primary">Insert College Details</button>
+            <button id="insertButton" type="button" class="btn btn-outline-primary">Insert College Details</button>
             <button type="button" class="btn btn-outline-primary">Insert Placement Details</button>
             <button type="button" class="btn btn-outline-primary">View All Feedbacks</button>
             <button type="button" class="btn btn-outline-primary">View All Registered Users</button>
@@ -36,7 +36,8 @@
                     <th scope="col">No of students</th>
                     <th scope="col">Principal</th>
                     <th scope="col">Founded</th>
-                    <th scope="col">Update</th>
+                    <th scope="col" class="text-uppercase">Update</th>
+                    <th scope="col" class="text-uppercase">Delete</th>
                 </tr>
             </thead>
             <tbody id="tbodyMain">
@@ -45,6 +46,8 @@
     </div>
     <script>
     var mysql = require('mysql');
+    const electron = require('electron')
+    const ipc = electron.ipcRenderer
 
     var con = mysql.createConnection({
         host: "localhost",
@@ -74,12 +77,37 @@
                     <td>${res.principal}</td>
                     <td>${res.founded}</td>
                     <td>
-                    <button class="btn btn-link">Update</button>
+                    <button onclick="updateCollege(this)" class="btn btn-link text-uppercase" data-id="${res.id}">Update</button>
+                    </td> <td>
+                    <button onclick="deleteCollege(this)" class="btn btn-link text-uppercase" data-id="${res.id}">Delete</button>
                     </td>
                 </tr>`
         });
         document.getElementById('tbodyMain').innerHTML = tableContent;
     });
+
+    document.getElementById('insertButton').addEventListener('click', () => {
+        ipc.send('open:window', 'insert');
+    });
+
+    function deleteCollege(collegeButton) {
+        var collegeID = collegeButton.getAttribute("data-id");
+        console.log(collegeID)
+        let sql = "DELETE FROM college WHERE id=" + collegeID + ";";
+        con.query(sql, function(err, result, fields) {
+            if (err) throw err;
+            ipc.send('refresh:window', 'admin');
+        });
+    }
+
+    function updateCollege(collegeButton) {
+        var collegeID = collegeButton.getAttribute("data-id");
+        ipc.send('open:window', 'update');
+
+        setTimeout(function() {
+            ipc.send('on:collegeUpdate', collegeID);
+        }, 500);
+    }
     </script>
 </body>
 
