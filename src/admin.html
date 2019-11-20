@@ -102,11 +102,7 @@
 
     function updateCollege(collegeButton) {
         var collegeID = collegeButton.getAttribute("data-id");
-        ipc.send('open:window', 'update');
-
-        setTimeout(function() {
-            ipc.send('on:collegeUpdate', collegeID);
-        }, 500);
+        ipc.send('update:window', collegeID);
     }
     </script>
 </body>

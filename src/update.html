@@ -56,6 +56,8 @@
     const electron = require('electron')
     const ipc = electron.ipcRenderer
 
+    const currentID = remote.getCurrentWindow().currentId;
+
     let inputName = document.getElementById('inputName');
     let inputDescription = document.getElementById('inputDescription');
     let inputAddress = document.getElementById('inputAddress');
@@ -99,32 +101,30 @@
         });
     })
 
-    ipc.on('collegeUpdate', function(event, arg) {
-        let sql = "SELECT * FROM college WHERE id=" + arg + ";";
-        con.query(sql, function(err, result, fields) {
-            if (err) throw err;
-            console.log(result[0]);
+    let sql = "SELECT * FROM college WHERE id=" + currentID + ";";
+    con.query(sql, function(err, result, fields) {
+        if (err) throw err;
+        console.log(result[0]);
 
-            let current_name = result[0].name;
-            let current_id = result[0].id;
-            let current_description = result[0].description;
-            let current_address = result[0].address;
-            let current_phone = result[0].phone;
-            let current_students = result[0].students;
-            let current_principal = result[0].principal;
-            let current_founded = result[0].founded;
+        let current_name = result[0].name;
+        let current_id = result[0].id;
+        let current_description = result[0].description;
+        let current_address = result[0].address;
+        let current_phone = result[0].phone;
+        let current_students = result[0].students;
+        let current_principal = result[0].principal;
+        let current_founded = result[0].founded;
 
-            inputName.value = current_name;
-            inputDescription.value = current_description;
-            inputAddress.value = current_address;
-            inputPhone.value = current_phone;
-            inputStudents.value = current_students;
-            inputPrincipal.value = current_principal;
-            inputFounded.value = current_founded;
-            inputId.value = current_id;
-            collegeName.innerHTML = current_name;
-        });
-    })
+        inputName.value = current_name;
+        inputDescription.value = current_description;
+        inputAddress.value = current_address;
+        inputPhone.value = current_phone;
+        inputStudents.value = current_students;
+        inputPrincipal.value = current_principal;
+        inputFounded.value = current_founded;
+        inputId.value = current_id;
+        collegeName.innerHTML = current_name;
+    });
     </script>
 </body>
 

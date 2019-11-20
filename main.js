@@ -12,6 +12,8 @@ let adminWindow
 let showCollegeWindow
 let insertWindow
 let updateWindow
+let detailsWindow
+let feedbackWindow
 
 function createInsertWindow() {
     // Create the browser window.
@@ -44,7 +46,7 @@ function createInsertWindow() {
 }
 
 
-function createUpdateWindow() {
+function createUpdateWindow(currentId) {
     // Create the browser window.
     updateWindow = new BrowserWindow({
         width: 600,
@@ -72,6 +74,39 @@ function createUpdateWindow() {
         // when you should delete the corresponding element.
         updateWindow = null
     })
+
+    updateWindow.currentId = currentId;
+}
+
+
+function createDetailsWindow(currentId) {
+    // Create the browser window.
+    detailsWindow = new BrowserWindow({
+        width: 1500,
+        height: 1000,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true
+        },
+        parent: showCollegeWindow,
+        modal: true,
+    })
+
+    // and load the index.html of the app.
+    detailsWindow.loadFile('src/details.html')
+
+    // Open the DevTools.
+    // detailsWindow.webContents.openDevTools()
+
+    // Emitted when the window is closed.
+    detailsWindow.on('closed', function() {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        detailsWindow = null
+    })
+
+    detailsWindow.currentId = currentId;
 }
 
 function createShowCollegeWindow() {
@@ -186,6 +221,36 @@ function createWindow() {
     })
 }
 
+function createFeedbackWindow(currentId) {
+    // Create the browser window.
+    feedbackWindow = new BrowserWindow({
+        width: 600,
+        height: 460,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true
+        },
+        parent: showCollegeWindow,
+        modal: true,
+    })
+
+    // and load the index.html of the app.
+    feedbackWindow.loadFile('src/feedback.html')
+
+    // Open the DevTools.
+    // feedbackWindow.webContents.openDevTools()
+
+    // Emitted when the window is closed.
+    feedbackWindow.on('closed', function() {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        feedbackWindow = null
+    })
+
+    feedbackWindow.currentId = currentId;
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -221,9 +286,6 @@ ipc.on('open:window', function(event, arg) {
         case 'insert':
             createInsertWindow();
             break;
-        case 'update':
-            createUpdateWindow();
-            break;
     }
 })
 
@@ -236,6 +298,14 @@ ipc.on('refresh:window', function(event, arg) {
     }
 })
 
-ipc.on('on:collegeUpdate', function(event, arg) {
-    updateWindow.webContents.send('collegeUpdate', arg)
+ipc.on('update:window', function(event, arg) {
+    createUpdateWindow(arg)
+})
+
+ipc.on('details:window', function(event, arg) {
+    createDetailsWindow(arg)
+})
+
+ipc.on('feedback:window', function(event, arg) {
+    createFeedbackWindow(arg)
 })
